@@ -52,6 +52,8 @@ $dbuser = 'root';
 $dbpassword = '';
 $connected = false;
 $db = null;
+$srednia = 0;
+$liczba = 0;
 try {
     $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -60,7 +62,18 @@ try {
 } catch (PDOException $e) {
     echo "Błąd połączenia z bazą danych: " . $e->getMessage();
 }
-if ($connected) {
+if ($connected) {//liczenie_sredniej
+    $query = "SELECT id_opinia FROM produkty WHERE ID_produkt='$id'";
+    $result = $db->query($query);
+    while ($row = $result->fetch(PDO::FETCH_ASSOC)){
+        $id_opinia = $row['id_opinia'];
+        $LiczOpinieQuery = "SELECT ocena FROM opinie";
+        $LiczOpinieResult = $db->query($LiczOpinieQuery);
+        while ($row2 = $LiczOpinieResult->fetch(PDO::FETCH_ASSOC)){
+            $srednia += $row2['ocena'];
+            $liczba++;
+        }
+    }
     $db->exec("SET NAMES utf8");
     echo "<h2 align='center'>Informacje o produkcie:</h2>";
     echo '<table align="center">';
@@ -88,15 +101,17 @@ if ($connected) {
         $idOpinia = $row['id_opinia'];
         $idKategoria = $row['id_kategoria'];
     }
-    echo '</table>';
+    echo '</table>';//opinie
     if ($idOpinia === 0 || is_null($idOpinia)) {
         echo '<p align="center">Brak opinii o produkcie.</p>';
     } else {
+        echo 'Średnia ocena o produkcie: '.round($srednia/$liczba).'/10<br>';
         $query = "SELECT * FROM opinie WHERE ID_opinia='$idOpinia'";
         $result = $db->query($query);
         echo '<table align="center">';
         echo '<tr>';
         echo '<th align="center">Użytkownik</th>';
+        echo '<th align="center">Data wystawienia</th>';
         echo '<th align="center">Ocena</th>';
         echo '<th align="center">Opinia</th>';
         echo '</tr>';
@@ -106,6 +121,7 @@ if ($connected) {
             $userNameRow = $userNameResult->fetch(PDO::FETCH_ASSOC);
             echo '<tr>';
             echo '<td align="center">' . $userNameRow['adres_email'] . '</td>';
+            echo '<td align="center">' . $userNameRow['data_wystawienia'] . '</td>';
             echo '<td align="center">' . $row['ocena'] . '/10</td>';
             echo '<td align="center">' . $row['opinia'] . '</td>';
             echo '</tr>';

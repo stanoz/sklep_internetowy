@@ -13,13 +13,25 @@ session_start();
 <hr color="grey">
 <br>
 <form method="post">
+    <input type="text" name="searchNazwaOpis" placeholder="Wyszukaj">
+    <select name="searchKategoria">
+        <option value="1">ołówki</option>
+        <option value="2">długopisy</option>
+        <option value="3">temperówki</option>
+        <option value="4">przyrządy do mierzenia</option>
+        <option value="5">inne</option>
+        <option value="all">wszystkie kategorie</option>
+    </select>
+    <input type="submit" name="searchProdukt" value="Wyszukaj">
+</form>
+<form method="post">
     <?php
     $_SESSION['login'] = false;
-    if (isset($_SESSION['idprodukt'])){
+    if (isset($_SESSION['idprodukt'])) {
         unset($_SESSION['idprodukt']);
     }
     if (isset($_POST['signout'])) {
-        unset($_SESSION['login']);
+        $_SESSION['login'] = false;
         unset($_SESSION['user_id']);
     }
     if (isset($_POST['signin'])) {
@@ -47,6 +59,7 @@ $dbuser = 'root';
 $dbpassword = '';
 $connected = false;
 $db = null;
+$query = "";
 try {
     $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -56,10 +69,24 @@ try {
     echo "Błąd połączenia z bazą danych: " . $e->getMessage();
 }
 if ($connected) {
-    $db->exec("SET NAMES utf8");
+    $db->exec("SET NAMES utf8");//szukanie
+    if (isset($_POST['searchProdukt'])) {
+        if (isset($_POST['searchNazwaOpis']) && !empty($_POST['searchNazwaOpis'])) {//nazwa_lub_opis
+            $search = $_POST['searchNazwaOpis'];
+            $query = "SELECT * FROM `produkty` WHERE `nazwa` LIKE '%$search%' OR `opis` LIKE '%$search%' OR `cena` LIKE '%$search%'";
+        } else {//kategoria
+            $idKategoria = $_POST['searchKategoria'];
+            if (is_numeric($idKategoria)) {
+                $query = "SELECT * FROM produkty WHERE id_kategoria='$idKategoria'";
+            }else{
+                $query = "SELECT * FROM produkty";
+            }
+        }
+    } else {
+        $query = "SELECT * FROM produkty";
+    }
     echo "<h2 align='center'>Wszystkie produkty:</h2>";
     echo '<table align="center">';
-    $query = "SELECT * FROM produkty";
     $result = $db->query($query);
     while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
         echo '<tr>';
