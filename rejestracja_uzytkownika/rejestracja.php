@@ -29,6 +29,9 @@ if ($_SESSION['fromsite'] === "main") {
     echo '<a href="../produkt_szczegoly/szczegoly_produkt.php">Powrót</a><br>';
 }elseif ($_SESSION['fromsite'] === 'opinion'){
     echo '<a href="../dodawanie_opini/dodaj_opinie.php">Powrót</a><br>';
+}elseif ($_SESSION['fromsite'] === 'cart'){
+    echo '<a href="../koszyk/pokaz_koszyk.php">Powrót</a><br>';
+    $_SESSION['fromsite'] = $_SESSION['previousfromsite'];
 }
 ?>
 <?php

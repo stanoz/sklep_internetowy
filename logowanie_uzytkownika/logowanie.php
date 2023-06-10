@@ -25,6 +25,11 @@ if ($_SESSION['fromsite'] === "main") {
     echo '<a href="../produkt_szczegoly/szczegoly_produkt.php">Powrót</a><br>';
 }elseif ($_SESSION['fromsite'] === 'opinion'){
     echo '<a href="../dodawanie_opini/dodaj_opinie.php">Powrót</a><br>';
+}elseif ($_SESSION['fromsite'] === 'cart'){
+    if (isset( $_SESSION['previousfromsite'])) {
+        $_SESSION['fromsite'] = $_SESSION['previousfromsite'];
+    }
+    echo '<a href="../koszyk/pokaz_koszyk.php">Powrót</a><br>';
 }
 echo 'Nie masz konta? <a href="../rejestracja_uzytkownika/rejestracja.php">Zarejestruj się</a><br>';
 ?>
@@ -68,6 +73,9 @@ if (isset($_POST['zaloguj'])) {
                         header('Location:../produkt_szczegoly/szczegoly_produktu.php');
                     }elseif ($_SESSION['fromsite'] === 'opinion'){
                         header('Location:../dodawanie_opini/dodaj_opinie.php');
+                    }elseif ($_SESSION['fromsite'] === 'cart'){
+                        $_SESSION['fromsite'] = $_SESSION['previousfromsite'];
+                         header('Location:../koszyk/pokaz_koszyk.php');
                     }
                 } else {
                     echo "Nie udało się zalogować! Spróbój ponownie.<br>";

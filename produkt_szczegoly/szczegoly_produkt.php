@@ -16,7 +16,7 @@ require_once ('../koszyk/dodaj_do_koszyka.php');
 if (isset($_POST['addtocart'])){
     $_SESSION['koszykIDprodukt'] = $_POST['koszyk_id_produktu'];
     if (isset($_SESSION['koszyk'])){
-        $koszyk = $_SESSION['koszyk'];
+        $koszyk = unserialize($_SESSION['koszyk']);
         $koszyk->dodaj();
         $_SESSION['koszyk'] = serialize($koszyk);
     }else{
@@ -28,9 +28,19 @@ if (isset($_POST['addtocart'])){
 ?>
 <form method="post">
     <?php
-    echo '<a href="../strona_glowna.php">Powrót do strony głównej.</a>';
+    if (isset($_SESSION['previousfromsite'])){
+        $_SESSION['fromsite'] = $_SESSION['previousfromsite'];
+    }
+    if ($_SESSION['fromsite'] === "main") {
+        echo '<a href="../strona_glowna.php">Powrót do strony głównej</a><br>';
+    }elseif ($_SESSION['fromsite'] === 'opinion'){
+        echo '<a href="../dodawanie_opini/dodaj_opinie.php">Powrót</a><br>';
+    }elseif ($_SESSION['fromsite'] === 'cart'){
+        $_SESSION['fromsite'] = $_SESSION['previousfromsite'];
+        echo '<a href="../koszyk/pokaz_koszyk.php">Powrót</a><br>';
+    }
     if (isset($_POST['signout'])) {
-        unset($_SESSION['login']);
+        $_SESSION['login'] = false;
         unset($_SESSION['user_id']);
     }
     if (isset($_POST['signin'])) {
@@ -40,6 +50,11 @@ if (isset($_POST['addtocart'])){
     if (isset($_POST['register'])) {
         $_SESSION['fromsite'] = "details";
         header('Location:../rejestracja_uzytkownika/rejestracja.php');
+    }
+    if (isset($_POST['showcart'])){
+        $_SESSION['previousfromsite'] = 'main';
+        $_SESSION['fromsite'] = "details";
+        header('Location:../koszyk/pokaz_koszyk.php');
     }
     echo '<p align="right"><input type="submit" name="register" value="Zarejestruj się"></p>';
     if (isset($_SESSION['login'])) {
@@ -51,6 +66,7 @@ if (isset($_POST['addtocart'])){
     } else {
         echo '<p align="right"><input type="submit" name="signin" value="Zaloguj się"></p><br>';
     }
+    echo '<p align="right"><input type="submit" name="showcart" value="Koszyk"></p><br>';
     ?>
 </form>
 <?php
@@ -98,20 +114,21 @@ if ($connected) {//liczenie_sredniej
     echo '<th align="center">Cena</th>';
     echo '</tr>';
     $query = "SELECT * FROM produkty WHERE ID_produkt='$id'";
-    $result = $db->query($query);
+    $result = $db->query($query);//szczegoly_produktu
     while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
         echo '<tr>';
         $photoPath = '../photos/' . $row['zdjecie'];
         echo '<td><img src="' . $photoPath . '" alt="' . $photoPath . '" width="180px" height="180px"></td>';
         echo '<td align="center"> &nbsp' . $row['opis'] . '</td>';
         echo '<td align="center"> &nbsp' . $row['cena'] . '&nbspzł</td>';
-        echo '<form method="post">';
+        echo '<td> &nbsp ilość sztuk w magazynie:&nbsp' . $row['ilosc'] . '&nbsp</td>';
         echo '<td> &nbsp<form method="post">
         <input type="hidden" name="koszyk_id_produktu" value="' . $row['ID_produkt'] . '">
         <input type="submit" name="addtocart" value="Dodaj do koszyka">
         </form></td>';
+        echo '<form method="post">';
         echo '<td align="center"> &nbsp<input type="submit" name="addopinion" value="Dodaj opinię"></td>';
-        echo '<form>';
+        echo '</form>';
         echo '</tr>';
         echo '<tr>';
         echo '<td align="center">' . $row['nazwa'] . '</td>';
@@ -158,6 +175,7 @@ if ($connected) {//liczenie_sredniej
             echo '<img src="' . $photoPath . '" alt="' . $photoPath . '" width="150px" height="150px">';
             echo '<a href="szczegoly_produkt.php?id=' . $row['ID_produkt'] . '">' . $row['nazwa'] . '</a>';
             echo '&nbsp' . $row['cena'] . '&nbspzł';
+            echo '<td> &nbsp ilość sztuk w magazynie:&nbsp' . $row['ilosc'] . '&nbsp</td>';
             echo '&nbsp<form method="post">
             <input type="hidden" name="koszyk_id_produktu" value="' . $row['ID_produkt'] . '">
             <input type="submit" name="addtocart" value="Dodaj do koszyka">
