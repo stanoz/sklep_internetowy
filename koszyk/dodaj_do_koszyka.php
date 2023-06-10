@@ -1,5 +1,5 @@
 <?php
-session_start();
+//session_start();
 ?>
 <?php
 
@@ -167,5 +167,4 @@ class Koszyk
         return $wartosc;
     }
 }
-
 ?>

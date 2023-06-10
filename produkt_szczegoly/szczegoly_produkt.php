@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once ('../koszyk/dodaj_do_koszyka.php');
 ?>
 <!DOCTYPE html>
 <html>
@@ -11,6 +12,20 @@ session_start();
 <h1 align="center">Sklep internetowy z artykułami biurowymi</h1><br>
 <hr color="grey">
 <br>
+<?php
+if (isset($_POST['addtocart'])){
+    $_SESSION['koszykIDprodukt'] = $_POST['koszyk_id_produktu'];
+    if (isset($_SESSION['koszyk'])){
+        $koszyk = $_SESSION['koszyk'];
+        $koszyk->dodaj();
+        $_SESSION['koszyk'] = serialize($koszyk);
+    }else{
+        $koszyk = new Koszyk();
+        $koszyk->dodaj();
+        $_SESSION['koszyk'] = serialize($koszyk);
+    }
+}
+?>
 <form method="post">
     <?php
     echo '<a href="../strona_glowna.php">Powrót do strony głównej.</a>';
@@ -91,7 +106,10 @@ if ($connected) {//liczenie_sredniej
         echo '<td align="center"> &nbsp' . $row['opis'] . '</td>';
         echo '<td align="center"> &nbsp' . $row['cena'] . '&nbspzł</td>';
         echo '<form method="post">';
-        echo '<td align="center"> &nbsp<input type="submit" name="addtocart" value="Dodaj do koszyka"></td>';
+        echo '<td> &nbsp<form method="post">
+        <input type="hidden" name="koszyk_id_produktu" value="' . $row['ID_produkt'] . '">
+        <input type="submit" name="addtocart" value="Dodaj do koszyka">
+        </form></td>';
         echo '<td align="center"> &nbsp<input type="submit" name="addopinion" value="Dodaj opinię"></td>';
         echo '<form>';
         echo '</tr>';
@@ -140,7 +158,10 @@ if ($connected) {//liczenie_sredniej
             echo '<img src="' . $photoPath . '" alt="' . $photoPath . '" width="150px" height="150px">';
             echo '<a href="szczegoly_produkt.php?id=' . $row['ID_produkt'] . '">' . $row['nazwa'] . '</a>';
             echo '&nbsp' . $row['cena'] . '&nbspzł';
-            echo '&nbsp<input type="submit" name="addtocart" value="Dodaj do koszyka">';
+            echo '&nbsp<form method="post">
+            <input type="hidden" name="koszyk_id_produktu" value="' . $row['ID_produkt'] . '">
+            <input type="submit" name="addtocart" value="Dodaj do koszyka">
+            </form>';
             echo '</fieldset>';
         }
     }

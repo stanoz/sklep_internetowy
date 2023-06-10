@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once ('koszyk/dodaj_do_koszyka.php');
 //haslo_admin123
 ?>
 <!DOCTYPE html>
@@ -27,6 +28,18 @@ session_start();
 <form method="post">
     <?php
     $_SESSION['login'] = false;
+    if (isset($_POST['addtocart'])){
+        $_SESSION['koszykIDprodukt'] = $_POST['koszyk_id_produktu'];
+       if (isset($_SESSION['koszyk'])){
+           $koszyk = $_SESSION['koszyk'];
+           $koszyk->dodaj();
+           $_SESSION['koszyk'] = serialize($koszyk);
+       }else{
+           $koszyk = new Koszyk();
+           $koszyk->dodaj();
+           $_SESSION['koszyk'] = serialize($koszyk);
+       }
+    }
     if (isset($_SESSION['idprodukt'])) {
         unset($_SESSION['idprodukt']);
     }
@@ -94,7 +107,10 @@ if ($connected) {
         echo '<td><img src="' . $photoPath . '" alt="' . $photoPath . '" width="150px" height="150px"></td>';
         echo '<td><a href="produkt_szczegoly/szczegoly_produkt.php?id=' . $row['ID_produkt'] . '">' . $row['nazwa'] . '</a></td>';
         echo '<td> &nbsp' . $row['cena'] . '&nbspzł</td>';
-        echo '<td> &nbsp<input type="submit" name="addtocart" value="Dodaj do koszyka"></td>';
+        echo '<td> &nbsp<form method="post">
+        <input type="hidden" name="koszyk_id_produktu" value="' . $row['ID_produkt'] . '">
+        <input type="submit" name="addtocart" value="Dodaj do koszyka">
+        </form></td>';
         echo '</tr>';
     }
     echo '</table>';
