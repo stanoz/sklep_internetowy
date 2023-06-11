@@ -54,6 +54,7 @@ class Koszyk
     public function dodaj(): void
     {
         $idProdukt = $_SESSION['koszykIDprodukt'];
+        echo 'doaje do '.$idProdukt.'<br>';
         if ($this->czyMoznaDodac($idProdukt)) {
             if (count($this->produktyWKoszyku) === 0) {//tablica_jest_pusta
                 $this->produktyWKoszyku[$idProdukt] = 1;
@@ -69,26 +70,26 @@ class Koszyk
                     $this->produktyWKoszyku[$idProdukt] = 1;
                 }
                 //zmniejszenie_ilosci_w_bazie_danych
-                $dbuser = 'root';
-                $dbpassword = '';
-                $connected = false;
-                $db = null;
-                try {
-                    $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
-                    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                    $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-                    $db->exec("SET NAMES utf8");
-                    $connected = true;
-                } catch (PDOException $e) {
-                    echo "Błąd połączenia z bazą danych: " . $e->getMessage();
-                }
-                if ($connected) {
-                    $query = "UPDATE produkty SET ilosc=ilosc-1 WHERE ID_produkt='$idProdukt'";
-                    if (!$db->query($query)) {
-                        echo 'Nie udało się wprowadzić zmian w stan magazynowy produktu!<br>';
-                    }
-                }
-                $db = null;
+//                $dbuser = 'root';
+//                $dbpassword = '';
+//                $connected = false;
+//                $db = null;
+//                try {
+//                    $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
+//                    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+//                    $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+//                    $db->exec("SET NAMES utf8");
+//                    $connected = true;
+//                } catch (PDOException $e) {
+//                    echo "Błąd połączenia z bazą danych: " . $e->getMessage();
+//                }
+//                if ($connected) {
+//                    $query = "UPDATE produkty SET ilosc=ilosc-1 WHERE ID_produkt='$idProdukt'";
+//                    if (!$db->query($query)) {
+//                        echo 'Nie udało się wprowadzić zmian w stan magazynowy produktu!<br>';
+//                    }
+//                }
+//                $db = null;
             }
         } else {
             echo 'Brak produktu w magazynie!<br>';
@@ -108,27 +109,28 @@ class Koszyk
             if ($produktJest) {
                 if ($this->czyMoznaOdjac($this->produktyWKoszyku[$idProdukt])) {
                     $this->produktyWKoszyku[$idProdukt]--;
+                    print_r($this->produktyWKoszyku);
                     //zwiekszenie_ilosci_produktu_w_magazynie
-                    $dbuser = 'root';
-                    $dbpassword = '';
-                    $connected = false;
-                    $db = null;
-                    try {
-                        $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
-                        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-                        $db->exec("SET NAMES utf8");
-                        $connected = true;
-                    } catch (PDOException $e) {
-                        echo "Błąd połączenia z bazą danych: " . $e->getMessage();
-                    }
-                    if ($connected) {
-                        $query = "UPDATE produkty SET ilosc=ilosc+1 WHERE ID_produkt='$idProdukt'";
-                        if (!$db->query($query)) {
-                            echo 'Nie udało się wprowadzić zmian w stan magazynowy produktu!<br>';
-                        }
-                    }
-                    $db = null;
+//                    $dbuser = 'root';
+//                    $dbpassword = '';
+//                    $connected = false;
+//                    $db = null;
+//                    try {
+//                        $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
+//                        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+//                        $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+//                        $db->exec("SET NAMES utf8");
+//                        $connected = true;
+//                    } catch (PDOException $e) {
+//                        echo "Błąd połączenia z bazą danych: " . $e->getMessage();
+//                    }
+//                    if ($connected) {
+//                        $query = "UPDATE produkty SET ilosc=ilosc+1 WHERE ID_produkt='$idProdukt'";
+//                        if (!$db->query($query)) {
+//                            echo 'Nie udało się wprowadzić zmian w stan magazynowy produktu!<br>';
+//                        }
+//                    }
+//                    $db = null;
                 }
             } else {
                 echo 'W koszyku nie ma tego produktu!<br>';
@@ -141,7 +143,7 @@ class Koszyk
     public function obliczWartosc(): float|int
     {
         $wartosc = 0;
-        if (count($this->produktyWKoszyku) > 0) {
+        if (count($this->produktyWKoszyku) > 0 && array_sum($this->produktyWKoszyku) > 0) {
             foreach ($this->produktyWKoszyku as $produkt => $ilosc) {
                 //pobieranie_ceny_produktu_i_liczenie_wartosc
                 $dbuser = 'root';
@@ -172,40 +174,42 @@ class Koszyk
 
     public function wyswietl(): void//wyswietla_zawartosc_koszyka
     {
-        if (count($this->produktyWKoszyku) > 0) {
+        if (count($this->produktyWKoszyku) > 0 && array_sum($this->produktyWKoszyku) > 0) {
             foreach ($this->produktyWKoszyku as $produkt => $ilosc) {
-                //pobieranie_ceny_produktu_i_liczenie_wartosc
-                $dbuser = 'root';
-                $dbpassword = '';
-                $connected = false;
-                $db = null;
-                try {
-                    $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
-                    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                    $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-                    $db->exec("SET NAMES utf8");
-                    $connected = true;
-                } catch (PDOException $e) {
-                    echo "Błąd połączenia z bazą danych: " . $e->getMessage();
-                }
-                if ($connected) {
-                    $query = "SELECT * FROM produkty WHERE ID_produkt='$produkt'";
-                    $result = $db->query($query);
-                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                        echo '<fieldset>';
-                        $photoPath = '../photos/' . $row['zdjecie'];
-                        echo '<img src="' . $photoPath . '" alt="' . $photoPath . '" width="150px" height="150px">';
-                        echo '<a href="../produkt_szczegoly/szczegoly_produkt.php?id=' . $row['ID_produkt'] . '">' . $row['nazwa'] . '</a>';
-                        echo '&nbsp' . $row['cena'] . '&nbspzł';
-                        echo '  Ilość sztuk: ' . $ilosc;
-                        echo '&nbsp<form method="post">
-                    <input type="hidden" name="koszyk_id_produktu" value="' . $row['ID_produkt'] . '">
-                    <input type="submit" name="deletefromcart" value="Usuń">
-                    </form>';
-                        echo '</fieldset>';
+                if ($ilosc > 0) {
+                    //pobieranie_ceny_produktu_i_liczenie_wartosc
+                    $dbuser = 'root';
+                    $dbpassword = '';
+                    $connected = false;
+                    $db = null;
+                    try {
+                        $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
+                        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+                        $db->exec("SET NAMES utf8");
+                        $connected = true;
+                    } catch (PDOException $e) {
+                        echo "Błąd połączenia z bazą danych: " . $e->getMessage();
                     }
+                    if ($connected) {
+                        $query = "SELECT * FROM produkty WHERE ID_produkt='$produkt'";
+                        $result = $db->query($query);
+                        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                            echo '<fieldset>';
+                            $photoPath = '../photos/' . $row['zdjecie'];
+                            echo '<img src="' . $photoPath . '" alt="' . $photoPath . '" width="150px" height="150px">';
+                            echo '<a href="../produkt_szczegoly/szczegoly_produkt.php?id=' . $row['ID_produkt'] . '">' . $row['nazwa'] . '</a>';
+                            echo '&nbsp' . $row['cena'] . '&nbspzł';
+                            echo '  Ilość sztuk: ' . $ilosc;
+                            echo '&nbsp<form method="post">
+                              <input type="hidden" name="koszyk_id_produktu" value="' . $row['ID_produkt'] . '">
+                              <input type="submit" name="deletefromcart" value="Usuń">
+                              </form>';
+                            echo '</fieldset>';
+                        }
+                    }
+                    $db = null;
                 }
-                $db = null;
             }
         } else {
             echo '<p align="center">Koszyk jest pusty!</p>';

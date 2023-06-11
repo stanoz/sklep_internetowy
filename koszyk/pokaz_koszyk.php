@@ -54,8 +54,13 @@ if ($_SESSION['fromsite'] === "main") {
 echo '<p align="center"><b>Zawartość koszyka:</b></p>';
 if (isset($_SESSION['koszyk'])){
     $koszyk = unserialize($_SESSION['koszyk']);
+    if (isset($_POST['deletefromcart'])){
+        $_SESSION['koszykIDprodukt'] = $_POST['koszyk_id_produktu'];
+        $koszyk->odejmij();
+    }
     $koszyk->wyswietl();
     $doZaplaty = $koszyk->obliczWartosc();
+    $_SESSION['koszyk'] = serialize($koszyk);
     echo 'Całkowita wartość koszyka: '.$doZaplaty.' zł<br>';
 }else{
     echo '<p align="center">Koszyk jest pusty!</p>';
