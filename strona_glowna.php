@@ -27,7 +27,9 @@ require_once ('koszyk/dodaj_do_koszyka.php');
 </form>
 <form method="post">
     <?php
-    $_SESSION['login'] = false;
+    if (!isset($_SESSION['login'])) {
+        $_SESSION['login'] = false;
+    }
     $koszyk = new Koszyk();
     if (isset($_POST['addtocart'])){
         $_SESSION['koszykIDprodukt'] = $_POST['koszyk_id_produktu'];

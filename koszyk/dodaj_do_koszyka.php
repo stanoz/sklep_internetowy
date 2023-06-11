@@ -54,7 +54,6 @@ class Koszyk
     public function dodaj(): void
     {
         $idProdukt = $_SESSION['koszykIDprodukt'];
-        echo 'doaje do '.$idProdukt.'<br>';
         if ($this->czyMoznaDodac($idProdukt)) {
             if (count($this->produktyWKoszyku) === 0) {//tablica_jest_pusta
                 $this->produktyWKoszyku[$idProdukt] = 1;
@@ -109,7 +108,6 @@ class Koszyk
             if ($produktJest) {
                 if ($this->czyMoznaOdjac($this->produktyWKoszyku[$idProdukt])) {
                     $this->produktyWKoszyku[$idProdukt]--;
-                    print_r($this->produktyWKoszyku);
                     //zwiekszenie_ilosci_produktu_w_magazynie
 //                    $dbuser = 'root';
 //                    $dbpassword = '';
@@ -177,6 +175,7 @@ class Koszyk
         if (count($this->produktyWKoszyku) > 0 && array_sum($this->produktyWKoszyku) > 0) {
             foreach ($this->produktyWKoszyku as $produkt => $ilosc) {
                 if ($ilosc > 0) {
+                    $_SESSION['pustykoszyk'] = false;
                     //pobieranie_ceny_produktu_i_liczenie_wartosc
                     $dbuser = 'root';
                     $dbpassword = '';
@@ -212,6 +211,7 @@ class Koszyk
                 }
             }
         } else {
+            $_SESSION['pustykoszyk'] = true;
             echo '<p align="center">Koszyk jest pusty!</p>';
         }
     }

@@ -25,7 +25,6 @@ if ($_SESSION['fromsite'] === "main") {
 ?>
 <form method="post">
     <?php
-    $_SESSION['login'] = false;
     if (isset($_POST['signout'])) {
         $_SESSION['login'] = false;
         unset($_SESSION['user_id']);
@@ -48,6 +47,14 @@ if ($_SESSION['fromsite'] === "main") {
     } else {
         echo '<p align="right"><input type="submit" name="signin" value="Zaloguj się"></p>';
     }
+    if (isset($_POST['zrobzamowienie'])){
+        if ($_SESSION['login']){
+            $_SESSION['fromsite'] = "cart";
+            header('Location:../zamowienia/stworz_zamowienie.php');
+        }else {
+            echo '<b>Muisz się zalogować żeby złożyć zamówienie!</b><br>';
+        }
+    }
     ?>
 </form>
 <?php
@@ -63,7 +70,16 @@ if (isset($_SESSION['koszyk'])){
     $_SESSION['koszyk'] = serialize($koszyk);
     echo 'Całkowita wartość koszyka: '.$doZaplaty.' zł<br>';
 }else{
+    $_SESSION['pustykoszyk'] = true;
     echo '<p align="center">Koszyk jest pusty!</p>';
+}
+if (isset($_SESSION['pustykoszyk'])){
+    if (!$_SESSION['pustykoszyk']){//w_koszyku_cos_jest
+        echo '<br>';
+        echo '<form method="post">';
+        echo '<input type="submit" name="zrobzamowienie" value="Złóż zamówienie">';
+        echo '</form>';
+    }
 }
 ?>
 </body>
