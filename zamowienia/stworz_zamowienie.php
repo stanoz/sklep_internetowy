@@ -25,36 +25,39 @@ if ($_SESSION['fromsite'] === "main") {
 ?>
 <p align="center">Składanie zamówienia</p>
 <?php
-if (isset($_POST['doplatnosci'])){
-    if (!empty($_POST['phonenumber']) && !empty($_POST['city']) && !empty($_POST['street']) && !empty($_POST['kodpocztowy']) && !empty($_POST['nrdomu']) && !empty($_POST['formaplatnosci'])){
-        if (preg_match('/^[0-9]{2}-[0-9]{3}$/',$_POST['kodpocztowy'])){
-            if (!empty($_POST['nrmieszkania'])){
-                if (is_int($_POST['nrdomu'])){//jest_nrmieszkania
+if (isset($_POST['doplatnosci'])) {
+    if (!empty($_POST['phonenumber']) && !empty($_POST['city']) && !empty($_POST['street']) && !empty($_POST['kodpocztowy']) && !empty($_POST['nrdomu']) && !empty($_POST['formaplatnosci'])) {
+        if (preg_match('/^[0-9]{2}-[0-9]{3}$/', $_POST['kodpocztowy'])) {
+            if (preg_match('/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{3,6}$/', $_POST['phonenumber'])) {
+                if (!empty($_POST['nrmieszkania'])) {
+                    if (is_int($_POST['nrdomu'])) {//jest_nrmieszkania
+                        $_SESSION['phonenumber'] = $_POST['phonenumber'];
+                        $_SESSION['city'] = $_POST['city'];
+                        $_SESSION['street'] = $_POST['street'];
+                        $_SESSION['kodpocztowy'] = $_POST['kodpocztowy'];
+                        $_SESSION['nrdomu'] = $_POST['nrdomu'];
+                        $_SESSION['nrmieszkania'] = $_POST['nrmieszkania'];
+                        $_SESSION['formaplatnosci'] = $_POST['formaplatnosci'];
+                        header('Location:platnosc.php');
+                    } else {
+                        echo 'Niepoprawne dane!<br>';
+                    }
+                } else {//nie_ma_nrmieszkania
                     $_SESSION['phonenumber'] = $_POST['phonenumber'];
                     $_SESSION['city'] = $_POST['city'];
                     $_SESSION['street'] = $_POST['street'];
                     $_SESSION['kodpocztowy'] = $_POST['kodpocztowy'];
                     $_SESSION['nrdomu'] = $_POST['nrdomu'];
-                    $_SESSION['nrmieszkania'] = $_POST['nrmieszkania'];
                     $_SESSION['formaplatnosci'] = $_POST['formaplatnosci'];
-                    //header
-                }else{
-                    echo 'Niepoprawne dane!<br>';
+                    header('Location:platnosc.php');
                 }
-            }else{//nie_ma_nrmieszkania
-                $_SESSION['phonenumber'] = $_POST['phonenumber'];
-                $_SESSION['city'] = $_POST['city'];
-                $_SESSION['street'] = $_POST['street'];
-                $_SESSION['kodpocztowy'] = $_POST['kodpocztowy'];
-                $_SESSION['nrdomu'] = $_POST['nrdomu'];
-                $_SESSION['nrmieszkania'] = $_POST['nrmieszkania'];
-                $_SESSION['formaplatnosci'] = $_POST['formaplatnosci'];
-                //header
+            } else {
+                echo 'Niepoprawne dane!<br>';
             }
-        }else{
+        } else {
             echo 'Niepoprawne dane!<br>';
         }
-    }else{
+    } else {
         echo 'Brak danych!<br>';
     }
 }
@@ -101,7 +104,8 @@ $db = null;
     <?php
     $koszyk = unserialize($_SESSION['koszyk']);
     $wartosc = $koszyk->obliczWartosc();
-    echo 'Do zapłaty: '.$wartosc.'<br>';
+    $_SESSION['dozaplaty'] = $wartosc;
+    echo 'Do zapłaty: ' . $wartosc . '<br>';
     echo '<input type="submit" name="doplatnosci" value="Zamawiam i płacę"><br>';
     ?>
 </form>

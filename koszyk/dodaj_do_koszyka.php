@@ -51,6 +51,11 @@ class Koszyk
         $this->produktyWKoszyku = array();
     }
 
+    public function getProduktyWKoszyku(): array
+    {
+        return $this->produktyWKoszyku;
+    }
+
     public function dodaj(): void
     {
         $idProdukt = $_SESSION['koszykIDprodukt'];
