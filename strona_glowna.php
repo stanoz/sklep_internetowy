@@ -85,6 +85,7 @@ echo '<form method="post">';
 echo '<p align="right"><input type="submit" name="register" value="Zarejestruj się"></p>';
 if (isset($_SESSION['login'])) {
     if ($_SESSION['login']) {
+        echo '<p align="right"><input type="submit" name="accountdetails" value="Sczegóły konta"></p>';//obsluz_to
         echo '<p align="right"><input type="submit" name="signout" value="Wyloguj się"></p>';
     } else {
         echo '<p align="right"><input type="submit" name="signin" value="Zaloguj się"></p>';
