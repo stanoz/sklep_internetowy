@@ -26,6 +26,37 @@ if ($_SESSION['fromsite'] === "main") {
 <p align="center">Składanie zamówienia</p>
 <?php
 if (isset($_POST['doplatnosci'])) {
+    $doZaplaty = $_SESSION['dozaplaty'];
+    $kodRabatowy = false;
+    if (!empty($_POST['rabat'])) {
+        $dbuser = 'root';
+        $dbpassword = '';
+        $connected = false;
+        $db = null;
+        try {
+            $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+            $db->exec("SET NAMES utf8");
+            $connected = true;
+        } catch (PDOException $e) {
+            echo "Błąd połączenia z bazą danych: " . $e->getMessage();
+        }
+        if ($connected) {
+            $query = "SELECT * FROM rabaty";
+            $result = $db->query($query);
+            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                if ($_POST['rabat'] === $row['kod']) {
+                    $kodRabatowy = true;
+                }
+            }
+        }
+        $db = null;
+    }
+    if ($kodRabatowy) {
+        $doZaplaty = round($doZaplaty*0.8,2);
+        $_SESSION['dozaplaty'] = $doZaplaty;
+    }
     if (!empty($_POST['phonenumber']) && !empty($_POST['city']) && !empty($_POST['street']) && !empty($_POST['kodpocztowy']) && !empty($_POST['nrdomu']) && !empty($_POST['formaplatnosci'])) {
         if (preg_match('/^[0-9]{2}-[0-9]{3}$/', $_POST['kodpocztowy'])) {
             if (preg_match('/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{3,6}$/', $_POST['phonenumber'])) {
@@ -99,7 +130,8 @@ $db = null;
         Forma płatności <select name="formaplatnosci">
             <option value="kartadebetowa">Karta debetowa</option>
             <option value="blik">BLIK</option>
-        </select>
+        </select><br>
+        Kod rabatowy <input type="text" name="rabat"><br>
     </label>
     <?php
     $koszyk = unserialize($_SESSION['koszyk']);

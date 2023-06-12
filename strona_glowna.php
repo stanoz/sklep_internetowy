@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once ('koszyk/dodaj_do_koszyka.php');
+require_once('koszyk/dodaj_do_koszyka.php');
 //haslo_admin123
 ?>
 <!DOCTYPE html>
@@ -13,70 +13,89 @@ require_once ('koszyk/dodaj_do_koszyka.php');
 <h1 align="center">Sklep internetowy z artykułami biurowymi</h1><br>
 <hr color="grey">
 <br>
-<form method="post">
-    <input type="text" name="searchNazwaOpis" placeholder="Wyszukaj">
-    <select name="searchKategoria">
-        <option value="1">ołówki</option>
-        <option value="2">długopisy</option>
-        <option value="3">temperówki</option>
-        <option value="4">przyrządy do mierzenia</option>
-        <option value="5">inne</option>
-        <option value="all">wszystkie kategorie</option>
-    </select>
-    <input type="submit" name="searchProdukt" value="Wyszukaj">
-</form>
-<form method="post">
-    <?php
-    if (!isset($_SESSION['login'])) {
-        $_SESSION['login'] = false;
+<?php
+echo '<form method="post">';
+echo '<input type="text" name="searchNazwaOpis" placeholder="Wyszukaj">';
+$dbuser = 'root';
+$dbpassword = '';
+$connected = false;
+$db = null;
+try {
+    $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+    $db->exec("SET NAMES utf8");
+    $connected = true;
+} catch (PDOException $e) {
+    echo "Błąd połączenia z bazą danych: " . $e->getMessage();
+}
+if ($connected) {
+    $query = "SELECT * FROM kategoria";
+    $result = $db->query($query);
+    echo '<select name="searchKategoria">';
+    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+        echo ' <option value="' . $row['ID_kategoria'] . '">' . $row['kategoria'] . '</option>';
     }
-    $koszyk = new Koszyk();
-    if (isset($_POST['addtocart'])){
-        $_SESSION['koszykIDprodukt'] = $_POST['koszyk_id_produktu'];
-       if (isset($_SESSION['koszyk'])){
-           $koszyk = unserialize($_SESSION['koszyk']);
-           $koszyk->dodaj();
-           $_SESSION['koszyk'] = serialize($koszyk);
-       }else{
-           $koszyk = new Koszyk();
-           $koszyk->dodaj();
-           $_SESSION['koszyk'] = serialize($koszyk);
-       }
+    echo '<option value="all">wszystkie kategorie</option>';
+    echo ' </select>';
+    echo '<input type="submit" name="searchProdukt" value="Wyszukaj">';
+}
+$db = null;
+echo '</form>';
+?>
+<?php
+if (!isset($_SESSION['login'])) {
+    $_SESSION['login'] = false;
+}
+$koszyk = new Koszyk();
+if (isset($_POST['addtocart'])) {
+    $_SESSION['koszykIDprodukt'] = $_POST['koszyk_id_produktu'];
+    if (isset($_SESSION['koszyk'])) {
+        $koszyk = unserialize($_SESSION['koszyk']);
+        $koszyk->dodaj();
+        $_SESSION['koszyk'] = serialize($koszyk);
+    } else {
+        $koszyk = new Koszyk();
+        $koszyk->dodaj();
+        $_SESSION['koszyk'] = serialize($koszyk);
     }
+}
 //    if (isset($_SESSION['idprodukt'])) {
 //        unset($_SESSION['idprodukt']);
 //    }
+$_SESSION['fromsite'] = "main";
+if (isset($_POST['signout'])) {
+    $_SESSION['login'] = false;
+    unset($_SESSION['user_id']);
+}
+if (isset($_POST['signin'])) {
     $_SESSION['fromsite'] = "main";
-    if (isset($_POST['signout'])) {
-        $_SESSION['login'] = false;
-        unset($_SESSION['user_id']);
-    }
-    if (isset($_POST['signin'])) {
-        $_SESSION['fromsite'] = "main";
-        header('Location:logowanie_uzytkownika/logowanie.php');
-    }
-    if (isset($_POST['register'])) {
-        $_SESSION['fromsite'] = "main";
-        header('Location:rejestracja_uzytkownika/rejestracja.php');
-    }
-    if (isset($_POST['showcart'])){
-        $_SESSION['previousfromsite'] = 'main';
-        $_SESSION['fromsite'] = "main";
-        header('Location:koszyk/pokaz_koszyk.php');
-    }
-    echo '<p align="right"><input type="submit" name="register" value="Zarejestruj się"></p>';
-    if (isset($_SESSION['login'])) {
-        if ($_SESSION['login']) {
-            echo '<p align="right"><input type="submit" name="signout" value="Wyloguj się"></p>';
-        } else {
-            echo '<p align="right"><input type="submit" name="signin" value="Zaloguj się"></p>';
-        }
+    header('Location:logowanie_uzytkownika/logowanie.php');
+}
+if (isset($_POST['register'])) {
+    $_SESSION['fromsite'] = "main";
+    header('Location:rejestracja_uzytkownika/rejestracja.php');
+}
+if (isset($_POST['showcart'])) {
+    $_SESSION['previousfromsite'] = 'main';
+    $_SESSION['fromsite'] = "main";
+    header('Location:koszyk/pokaz_koszyk.php');
+}
+echo '<form method="post">';
+echo '<p align="right"><input type="submit" name="register" value="Zarejestruj się"></p>';
+if (isset($_SESSION['login'])) {
+    if ($_SESSION['login']) {
+        echo '<p align="right"><input type="submit" name="signout" value="Wyloguj się"></p>';
     } else {
         echo '<p align="right"><input type="submit" name="signin" value="Zaloguj się"></p>';
     }
-    echo '<p align="right"><input type="submit" name="showcart" value="Koszyk"></p><br>';
-    ?>
-</form>
+} else {
+    echo '<p align="right"><input type="submit" name="signin" value="Zaloguj się"></p>';
+}
+echo '<p align="right"><input type="submit" name="showcart" value="Koszyk"></p><br>';
+echo '</form>';
+?>
+
 <?php
 $dbuser = 'root';
 $dbpassword = '';
@@ -101,7 +120,7 @@ if ($connected) {
             $idKategoria = $_POST['searchKategoria'];
             if (is_numeric($idKategoria)) {
                 $query = "SELECT * FROM produkty WHERE id_kategoria='$idKategoria'";
-            }else{
+            } else {
                 $query = "SELECT * FROM produkty";
             }
         }

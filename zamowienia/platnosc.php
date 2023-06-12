@@ -50,35 +50,6 @@ if (isset($_POST['place'])) {
         }
     }
     if ($walidacja) {
-        $kodRabatowy = false;
-        if (!empty($_POST['rabat'])) {
-            $dbuser = 'root';
-            $dbpassword = '';
-            $connected = false;
-            $db = null;
-            try {
-                $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
-                $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-                $db->exec("SET NAMES utf8");
-                $connected = true;
-            } catch (PDOException $e) {
-                echo "Błąd połączenia z bazą danych: " . $e->getMessage();
-            }
-            if ($connected) {
-                $query = "SELECT * FROM rabaty";
-                $result = $db->query($query);
-                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                    if ($_POST['rabat'] === $row['kod']) {
-                        $kodRabatowy = true;
-                    }
-                }
-            }
-            $db = null;
-        }
-        if ($kodRabatowy) {
-            $doZaplaty *= 0.8;
-        }
         $dbuser = 'root';
         $dbpassword = '';
         $connected = false;
@@ -93,9 +64,27 @@ if (isset($_POST['place'])) {
             echo "Błąd połączenia z bazą danych: " . $e->getMessage();
         }
         if ($connected) {
-            $query = "INSERT INTO adres(id_uzytkownik, miasto, ulica, kod_pocztowy, nr_mieszkania, nr_domu) 
-                      VALUES ('$idUzytkownik','$miasto','$ulica','$kodPocztowy','$nrMieszkania','$nrDomu')";//sprawdz_czy_taki_juz_jest
-            $db->query($query);
+            $nowyAdres = true;//sprawdzenie_czy jest_juz_taki_adres
+            $query = "SELECT * FROM adres WHERE id_uzytkownik='$idUzytkownik'";
+            $result = $db->query($query);
+            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+               if ($miasto === $row['miasto']){
+                   if ($ulica === $row['ulica']){
+                       if ($kodPocztowy == $row['kod_pocztowy']){
+                           if ($nrDomu === $row['nr_domu']){
+                               if ($nrMieszkania === $row['nr_mieszkania']){
+                                   $nowyAdres = false;
+                               }
+                           }
+                       }
+                   }
+               }
+            }
+            if ($nowyAdres) {
+                $query = "INSERT INTO adres(id_uzytkownik, miasto, ulica, kod_pocztowy, nr_mieszkania, nr_domu) 
+                      VALUES ('$idUzytkownik','$miasto','$ulica','$kodPocztowy','$nrMieszkania','$nrDomu')";
+                $db->query($query);
+            }
             $idAdres = 0;//branie_id_adresu
             $query = "SELECT ID_adres FROM adres WHERE id_uzytkownik='$idUzytkownik'";
             $result = $db->query($query);
@@ -108,11 +97,23 @@ if (isset($_POST['place'])) {
             while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 $adresEmail = $row['adres_email'];
             }
-            $query = "INSERT INTO dane_kontaktowe(id_uzytkownik, nr_telefonu, adres_email) 
+            $noweDaneKontatkowe = true;//sprawdzenie_czy_sa_juz_takie_dane_kontaktowe
+            $query = "SELECT * FROM dane_kontaktowe WHERE id_uzytkownik='$idUzytkownik'";
+            $result = $db->query($query);
+            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                if ($nrTelefonu === $row['nr_telefonu']){
+                    if ($adresEmail === $row['adres_email']){
+                        $noweDaneKontatkowe = false;
+                    }
+                }
+            }
+            if ($noweDaneKontatkowe) {
+                $query = "INSERT INTO dane_kontaktowe(id_uzytkownik, nr_telefonu, adres_email) 
                       VALUES ('$idUzytkownik','$nrTelefonu','$adresEmail')";
-            $db->query($query);
+                $db->query($query);
+            }
             $idDaneKontaktowe = 0;//branie_id_dane_kontakowe
-            $query = "SELECT ID_dane_kontaktowe FROM dane_kontaktowe WHERE id_uzytkownik='$idUzytkownik'";
+            $query = "SELECT ID_dane_kontaktowe FROM dane_kontaktowe WHERE id_uzytkownik='$idUzytkownik'";//sprawdz_czy_juz_sa
             $result = $db->query($query);
             while ($row = $result->fetch(PDO::FETCH_ASSOC)){
                 $idDaneKontaktowe = $row['ID_dane_kontaktowe'];
@@ -133,7 +134,7 @@ if (isset($_POST['place'])) {
             }
         }
         $db = null;
-        header('Location:po_zaplacie.html');
+        header('Location:po_zaplacie.php');
     } else {
         echo 'Niepoprawne dane!<br>';
     }
@@ -145,7 +146,6 @@ $doZaplaty = $_SESSION['dozaplaty'];
 echo 'Do zapłaty: <b>' . $doZaplaty . '</b><br>';
 echo '<form method="post">';
 echo '<label>';
-echo 'Kod rabatowy <input type="text" name="rabat"><br>';
 if ($formaPlatnosci === 'kartadebetowa') {
     echo 'Numer karty <input type="text" name="nrkarty" minlength="16" required><br>';
     echo 'Miesiąc <input type="text" name="miesiac" min="1" max="12" required>';
