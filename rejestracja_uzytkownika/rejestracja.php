@@ -41,48 +41,52 @@ if (isset($_POST['zarejestruj'])) {
     } else {
         if (preg_match("/^[^.].(([a-zA-Z0-9\.\-\!\#\$\%\&\'\*\+\/\=\?\^\_\`\{\|\}\~])(?!\.\.)){1,64}@{1}[a-zA-Z0-9\-]{1,255}\.[a-zA-Z]{2,3}(\.[a-zA-Z]{2,3})?$/", $_POST['email'])) {
             if (preg_match('/^(?=.*[!@#\$%\^&*()\-=_+[\]{};\':\"|,.<>\/?])\S{6,}$/', $_POST['haslo'])) {
-                $dbuser = 'root';
-                $dbpassword = '';
-                $connected = false;
-                $db = null;
-                try {
-                    $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
-                    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                    $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-                    $connected = true;
-                } catch (PDOException $e) {
-                    echo "Błąd połączenia z bazą danych: " . $e->getMessage();
-                }
-                if ($connected) {
-                    $imie = $_POST['imie'];
-                    $nazwisko = $_POST['nazwisko'];
-                    $email = $_POST['email'];
-                    $haslo = password_hash($_POST['haslo'], PASSWORD_DEFAULT);
-                    $typ = 2;
-                    //sprawdzenie_czy_taki_uzytkownik_istnieje
-                    $userAlreadyExists = false;
-                    $query = "SELECT adres_email FROM uzytkownicy";
-                    $result = $db->query($query);
-                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                        if ($email === $row['adres_email']) {
-                            $userAlreadyExists = true;
-                        }
-                    }
-                    if (!$userAlreadyExists) {
-                        //rejestracja
-                        $query = "INSERT INTO uzytkownicy (imie, nazwisko, adres_email, haslo, id_typ_uzytkownika) 
-                                  VALUES ('$imie','$nazwisko','$email','$haslo','$typ')";
-                        if ($db->query($query)) {
-                            header('Location:../logowanie_uzytkownika/logowanie.php');
-                        } else {
-                            echo "Rejestracja nie powiodła się! Spróbój ponownie.<br>";
-                        }
-                    }else{
-                        echo "Konto o takim adresie email już istnieje!<br>";
-                    }
+                if (!preg_match('#^\s+$#',$_POST['imie']) && !preg_match('#^\s+$#',$_POST['nazwisko'])) {
+                    $dbuser = 'root';
+                    $dbpassword = '';
+                    $connected = false;
                     $db = null;
-                } else {
-                    echo "Nie połączono z bazą danych<br>";
+                    try {
+                        $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
+                        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+                        $connected = true;
+                    } catch (PDOException $e) {
+                        echo "Błąd połączenia z bazą danych: " . $e->getMessage();
+                    }
+                    if ($connected) {
+                        $imie = $_POST['imie'];
+                        $nazwisko = $_POST['nazwisko'];
+                        $email = $_POST['email'];
+                        $haslo = password_hash($_POST['haslo'], PASSWORD_DEFAULT);
+                        $typ = 2;
+                        //sprawdzenie_czy_taki_uzytkownik_istnieje
+                        $userAlreadyExists = false;
+                        $query = "SELECT adres_email FROM uzytkownicy";
+                        $result = $db->query($query);
+                        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                            if ($email === $row['adres_email']) {
+                                $userAlreadyExists = true;
+                            }
+                        }
+                        if (!$userAlreadyExists) {
+                            //rejestracja
+                            $query = "INSERT INTO uzytkownicy (imie, nazwisko, adres_email, haslo, id_typ_uzytkownika) 
+                                  VALUES ('$imie','$nazwisko','$email','$haslo','$typ')";
+                            if ($db->query($query)) {
+                                header('Location:../logowanie_uzytkownika/logowanie.php');
+                            } else {
+                                echo "Rejestracja nie powiodła się! Spróbój ponownie.<br>";
+                            }
+                        } else {
+                            echo "Konto o takim adresie email już istnieje!<br>";
+                        }
+                        $db = null;
+                    } else {
+                        echo "Nie połączono z bazą danych<br>";
+                    }
+                }else{
+                    echo 'Imię i/lub nazwisko nie mogą być spacją!<br>';
                 }
             } else {
                 echo "Za słabe hasło!<br>";

@@ -113,14 +113,15 @@ if (isset($_POST['place'])) {
                 $db->query($query);
             }
             $idDaneKontaktowe = 0;//branie_id_dane_kontakowe
-            $query = "SELECT ID_dane_kontaktowe FROM dane_kontaktowe WHERE id_uzytkownik='$idUzytkownik'";//sprawdz_czy_juz_sa
+            $query = "SELECT ID_dane_kontaktowe FROM dane_kontaktowe WHERE id_uzytkownik='$idUzytkownik'";
             $result = $db->query($query);
             while ($row = $result->fetch(PDO::FETCH_ASSOC)){
                 $idDaneKontaktowe = $row['ID_dane_kontaktowe'];
             }
             $dataZlozenia = date("Y-m-d");
-            $query = "INSERT INTO zamowienia(id_uzytkownik, id_adres, sposob_platnosci, wartosc_zamowienia, id_dane_kontaktowe, stan, data_zlozenia) 
-                      VALUES ('$idUzytkownik','$idAdres','$formaPlatnosci','$doZaplaty','$idDaneKontaktowe','przyjete','$dataZlozenia')";
+            $czyRabat = $_SESSION['czy_rabat'];
+            $query = "INSERT INTO zamowienia(id_uzytkownik, id_adres, sposob_platnosci, wartosc_zamowienia, id_dane_kontaktowe, stan, data_zlozenia,czy_rabat) 
+                      VALUES ('$idUzytkownik','$idAdres','$formaPlatnosci','$doZaplaty','$idDaneKontaktowe','przyjete','$dataZlozenia','$czyRabat')";
             $db->query($query);
             $koszyk = unserialize($_SESSION['koszyk']);
             $produkty = $koszyk->getProduktyWKoszyku();
@@ -134,6 +135,8 @@ if (isset($_POST['place'])) {
             }
         }
         $db = null;
+        unset($_SESSION['koszyk']);
+        echo '<h2 align="center">Zamówienie przyjęte do realizacji!</h2>';
         header('Location:po_zaplacie.php');
     } else {
         echo 'Niepoprawne dane!<br>';

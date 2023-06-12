@@ -47,7 +47,7 @@ echo '</form>';
 if (!isset($_SESSION['login'])) {
     $_SESSION['login'] = false;
 }
-$koszyk = new Koszyk();
+//$koszyk = new Koszyk();
 if (isset($_POST['addtocart'])) {
     $_SESSION['koszykIDprodukt'] = $_POST['koszyk_id_produktu'];
     if (isset($_SESSION['koszyk'])) {

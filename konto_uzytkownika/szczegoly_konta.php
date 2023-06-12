@@ -11,15 +11,19 @@ session_start();
 <h1 align="center">Sklep internetowy z artykułami biurowymi</h1><br>
 <hr color="grey">
 <br>
+<a href="../strona_glowna.php">Powrót do strony głównej.</a>
+<?php
+if (isset($_POST['napiszreklamacje'])){
+    $_SESSION['id_zamowienia_reklamacja'] = $_POST['id_zamowienia_reklamacja'];
+    header('Location:../reklamacje/zloz_reklamacje.php');
+}
+?>
 <?php
 $idUzytkownik = $_SESSION['user_id'];
 $dbuser = 'root';
 $dbpassword = '';
 $connected = false;
 $db = null;
-$imie = "";
-$nazwisko = "";
-$adresEmail = "";
 try {
     $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -52,7 +56,9 @@ if ($connected) {
         echo '<td align="center">'.$row['wartosc'].'</td>';
         echo '<td align="center">'.$row['data_zlozenia'].'</td>';
         echo '<td align="center">'.$row['stan'].'</td>';
-        echo '<td align="center">'.$row['stan'].'</td>';//tu_ma_byc_przycisk_z_id_zamowienia
+        echo '<td>
+        <input type="hidden" name="id_zamowienia_reklamacja" value="' . $row['ID_zamowienia'] . '">
+        <input type="submit" name="napiszreklamacje" value="Napisz reklamację"></td>';
         echo '</tr>';
     }
     echo '</table>';

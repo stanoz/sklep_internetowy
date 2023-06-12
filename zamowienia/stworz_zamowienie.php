@@ -53,6 +53,7 @@ if (isset($_POST['doplatnosci'])) {
         }
         $db = null;
     }
+    $_SESSION['czy_rabat'] = $kodRabatowy;
     if ($kodRabatowy) {
         $doZaplaty = round($doZaplaty*0.8,2);
         $_SESSION['dozaplaty'] = $doZaplaty;
