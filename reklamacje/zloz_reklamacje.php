@@ -37,8 +37,8 @@ if (isset($_POST['zlozreklamacje'])){
                     echo "Błąd połączenia z bazą danych: " . $e->getMessage();
                 }
                 if ($connected) {
-                    $query = "INSERT INTO reklamacje(id_uzytkownik, id_zamowienia, tresc, data_zlozenia) 
-                              VALUES ('$idUzytkownik','$idZamowieniaReklamacja','$tresc','$dataZlozenia')";
+                    $query = "INSERT INTO reklamacje(id_uzytkownik, id_zamowienia, tresc, data_zlozenia,stan) 
+                              VALUES ('$idUzytkownik','$idZamowieniaReklamacja','$tresc','$dataZlozenia','rozpatrywanie')";
                     $db->query($query);
                 }
                 $db = null;
@@ -53,7 +53,7 @@ if (isset($_POST['zlozreklamacje'])){
     }
 }
 ?>
-<a href="../konto_uzytkownika/szczegoly_konta.php">Powrót.</a>
+<a href="../konto_uzytkownika/szczegoly_konta.php">Powrót.</a><br>
 <?php
 $idZamowieniaReklamacja = $_SESSION['id_zamowienia_reklamacja'];
 echo 'Zawartość zamówienia:<br>';
@@ -71,7 +71,7 @@ try {
     echo "Błąd połączenia z bazą danych: " . $e->getMessage();
 }
 if ($connected) {
-    $query = "SELECT * FROM zamowione_produkty WHERE ID_zamowienia='$idZamowieniaReklamacja'";
+    $query = "SELECT * FROM zamowione_produkty WHERE ID_zamowienie='$idZamowieniaReklamacja'";
     $result = $db->query($query);
     echo '<table align="center">';
     echo '<tr>';
@@ -100,7 +100,7 @@ $db = null;
 <form method="post">
     <labeL>
         Treść:<br>
-        <input type="text" name="trescreklamacji" placeholder="Napisz wiadomość" maxlength="255" required><br>
+        <textarea name="trescreklamacji" placeholder="Napisz wiadomość" maxlength="255" required></textarea><br>
         <input type="submit" name="zlozreklamacje" value="Złóż reklamację"><br>
     </labeL>
 </form>

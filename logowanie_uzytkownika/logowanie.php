@@ -60,13 +60,12 @@ if (isset($_POST['zaloguj'])) {
                 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     if (password_verify($haslo, $row['haslo'])) {
                         $login = true;
+                        $_SESSION['user_id'] = $row['ID_uzytkownik'];
                     }
                 }
                 $db = null;
                 if ($login) {
-                    $data = $result->fetch(PDO::FETCH_ASSOC);
                     $_SESSION['login'] = true;
-                    $_SESSION['user_id'] = $data['ID_uzytkownik'];
                     if ($_SESSION['fromsite'] === "main") {
                         header('Location:../strona_glowna.php');
                     } elseif ($_SESSION['fromsite'] === "details") {

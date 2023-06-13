@@ -31,7 +31,7 @@ if (isset($_POST['place'])) {
     if ($formaPlatnosci === 'kartadebetowa') {//karta_debetowa
         if (!empty($_POST['nrkarty']) && !empty($_POST['miesiac']) && !empty($_POST['rok']) && !empty($_POST['kodkarta'])) {
             if (preg_match('/^([0-9]{1}\s*){16}$/', $_POST['nrkarty'])) {
-                if (is_int($_POST['miesiac']) && is_int($_POST['rok'])) {
+                if (is_numeric($_POST['miesiac']) && is_numeric($_POST['rok'])) {
                     if ($_POST['miesiac'] > 0 && $_POST['miesiac'] < 12) {
                         if ($_POST['rok'] > 0) {
                             if (preg_match('/^[0-9]{3}$/', $_POST['kodkarta'])) {
@@ -146,7 +146,7 @@ if (isset($_POST['place'])) {
 <?php
 $formaPlatnosci = $_SESSION['formaplatnosci'];
 $doZaplaty = $_SESSION['dozaplaty'];
-echo 'Do zapłaty: <b>' . $doZaplaty . '</b><br>';
+echo 'Do zapłaty: <b>' . $doZaplaty . ' zł</b><br>';
 echo '<form method="post">';
 echo '<label>';
 if ($formaPlatnosci === 'kartadebetowa') {

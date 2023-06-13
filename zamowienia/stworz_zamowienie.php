@@ -46,7 +46,7 @@ if (isset($_POST['doplatnosci'])) {
             $query = "SELECT * FROM rabaty";
             $result = $db->query($query);
             while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                if ($_POST['rabat'] === $row['kod']) {
+                if ($_POST['rabat'] == $row['tresc']) {
                     $kodRabatowy = true;
                 }
             }
@@ -62,7 +62,7 @@ if (isset($_POST['doplatnosci'])) {
         if (preg_match('/^[0-9]{2}-[0-9]{3}$/', $_POST['kodpocztowy'])) {
             if (preg_match('/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{3,6}$/', $_POST['phonenumber'])) {
                 if (!empty($_POST['nrmieszkania'])) {
-                    if (is_int($_POST['nrdomu'])) {//jest_nrmieszkania
+                    if (is_numeric($_POST['nrdomu'])) {//jest_nrmieszkania
                         $_SESSION['phonenumber'] = $_POST['phonenumber'];
                         $_SESSION['city'] = $_POST['city'];
                         $_SESSION['street'] = $_POST['street'];
@@ -84,10 +84,10 @@ if (isset($_POST['doplatnosci'])) {
                     header('Location:platnosc.php');
                 }
             } else {
-                echo 'Niepoprawne dane!<br>';
+                echo 'Niepoprawny numer telefonu!<br>';
             }
         } else {
-            echo 'Niepoprawne dane!<br>';
+            echo 'Niepoprawny kod pocztowy!<br>';
         }
     } else {
         echo 'Brak danych!<br>';
@@ -122,12 +122,12 @@ $db = null;
 ?>
 <form method="post">
     <label>
-        Numer telefonu <input type="text" name="phonenumber" minlength="9" required>
-        Miasto <input type="text" name="city" required>
-        Ulica <input type="text" name="street" required>
-        Kod pocztowy <input type="text" name="kodpocztowy" required>
-        Numer domu <input type="text" name="nrdomu" required>
-        Numer mieszkania <input type="text" name="nrmieszkania">
+        Numer telefonu <input type="text" name="phonenumber" minlength="9" required><br>
+        Miasto <input type="text" name="city" required><br>
+        Ulica <input type="text" name="street" required><br>
+        Kod pocztowy <input type="text" name="kodpocztowy" required><br>
+        Numer domu <input type="text" name="nrdomu" required><br>
+        Numer mieszkania <input type="text" name="nrmieszkania"><br>
         Forma płatności <select name="formaplatnosci">
             <option value="kartadebetowa">Karta debetowa</option>
             <option value="blik">BLIK</option>
@@ -138,7 +138,7 @@ $db = null;
     $koszyk = unserialize($_SESSION['koszyk']);
     $wartosc = $koszyk->obliczWartosc();
     $_SESSION['dozaplaty'] = $wartosc;
-    echo 'Do zapłaty: ' . $wartosc . '<br>';
+    echo 'Do zapłaty: ' . $wartosc . ' zł<br>';
     echo '<input type="submit" name="doplatnosci" value="Zamawiam i płacę"><br>';
     ?>
 </form>

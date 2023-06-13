@@ -60,13 +60,23 @@ if (isset($_SESSION['login'])) {
         }
         if ($connected) {
             $id_uzytkownik = $_SESSION['user_id'];
-            $query = "SELECT id_zamowione_produkty FROM zamowienia WHERE id_uzytkownik='$id_uzytkownik'";
+            $query = "SELECT ID_zamowienia FROM zamowienia WHERE id_uzytkownik='$id_uzytkownik'";
             $result = $db->query($query);
             while ($row = $result->fetch(PDO::FETCH_ASSOC)){
-                $idZamowioneProdukty = $row['id_zamowione_produkty'];
-                $queryProdukt = "SELECT id_produktu FROM zamowione_produkty WHERE id_produktu='$idZamowioneProdukty'";
-                if ($db->query($queryProdukt)){
-                    $kupilProdukt = true;
+                $idZamowienia = $row['ID_zamowienia'];
+                $queryZamowioneProdukty = "SELECT ID_zamowione_produkty FROM zamowione_produkty WHERE id_zamowienie='$idZamowienia'";
+                $resultZamowioneProdukty = $db->query($queryZamowioneProdukty);
+                while ($rowZamowioneProdukty = $resultZamowioneProdukty->fetch(PDO::FETCH_ASSOC)) {
+                    $idZamowioneProdukty = $rowZamowioneProdukty['ID_zamowione_produkty'];
+                    $queryProdukt = "SELECT id_produktu FROM zamowione_produkty WHERE id_produktu='$idZamowioneProdukty'";
+                    $resultProdukt = $db->query($queryProdukt);
+                    while ($rowProdukt = $resultProdukt->fetch(PDO::FETCH_ASSOC)){
+                        $idProdukt = $rowProdukt['id_produktu'];
+                        if (!is_null($idProdukt)) {
+                            $kupilProdukt = true;
+                                $_SESSION['opiniaIDprodukt'] = $rowProdukt['id_produktu'];
+                        }
+                    }
                 }
             }
         }
@@ -96,7 +106,7 @@ if (isset($_POST['newopinion'])) {
         setcookie('opinia', 'antyspam', $expirationTime);
         if (isset($_POST['ocena']) && isset($_POST['opinion'])) {
             if (is_numeric($_POST['ocena'])) {
-                if (is_int($_POST['ocena']) && strlen($_POST['opinion']) <= 255) {
+                if (strlen($_POST['opinion']) <= 255) {
                     $dbuser = 'root';
                     $dbpassword = '';
                     $connected = false;
@@ -105,6 +115,7 @@ if (isset($_POST['newopinion'])) {
                         $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
                         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                         $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+                        $db->exec("SET NAMES utf8");
                         $connected = true;
                     } catch (PDOException $e) {
                         echo "Błąd połączenia z bazą danych: " . $e->getMessage();
@@ -115,7 +126,11 @@ if (isset($_POST['newopinion'])) {
                         $id_uzytkownik = $_SESSION['user_id'];
                         $data_wystawienia = date("Y-m-d");
                         $query = "INSERT INTO opinie (opinia,ocena,id_uzytkownik,data_wystawienia) 
-                        VALUES ('$opinia','$ocena','$id_uzytkownik',$data_wystawienia)";
+                        VALUES ('$opinia','$ocena','$id_uzytkownik','$data_wystawienia')";
+                        $db->query($query);
+                        $idOpinia = $db->lastInsertId();
+                        $idProdukt = $_SESSION['opiniaIDprodukt'];
+                        $query = "UPDATE produkty SET id_opinia='$idOpinia' WHERE ID_produkt='$idProdukt'";
                         $db->query($query);
                     }
                     $db = null;

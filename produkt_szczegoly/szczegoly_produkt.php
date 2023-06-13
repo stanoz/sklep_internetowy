@@ -151,12 +151,12 @@ if ($connected) {//liczenie_sredniej
         echo '<th align="center">Opinia</th>';
         echo '</tr>';
         while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-            $userNameQuery = "SELECT adres_email FROM uzytkwnicy WHERE ID_uzytkownik='" . $row['id_uzytkownik'] . "'";
+            $userNameQuery = "SELECT adres_email FROM uzytkownicy WHERE ID_uzytkownik='" . $row['id_uzytkownik'] . "'";
             $userNameResult = $db->query($userNameQuery);
             $userNameRow = $userNameResult->fetch(PDO::FETCH_ASSOC);
             echo '<tr>';
             echo '<td align="center">' . $userNameRow['adres_email'] . '</td>';
-            echo '<td align="center">' . $userNameRow['data_wystawienia'] . '</td>';
+            echo '<td align="center">' . $row['data_wystawienia'] . '</td>';
             echo '<td align="center">' . $row['ocena'] . '/10</td>';
             echo '<td align="center">' . $row['opinia'] . '</td>';
             echo '</tr>';
