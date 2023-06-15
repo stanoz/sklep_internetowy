@@ -12,6 +12,9 @@ session_start();
 if (isset($_POST['reklamacje'])){
     header('Location:admin_reklamacje.php');
 }
+if (isset($_POST['zamowienia'])){
+    header('Location:admin_zamowienia.php');
+}
 ?>
 <h1 align="center">Sklep internetowy z artykułami biurowymi</h1><br>
 <h2 align="center">Panel administracyjny</h2><br>
