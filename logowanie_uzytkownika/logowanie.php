@@ -55,12 +55,13 @@ if (isset($_POST['zaloguj'])) {
                 $login = false;
                 $email = $_POST['email'];
                 $haslo = $_POST['haslo'];
-                $query = "SELECT haslo,ID_uzytkownik FROM uzytkownicy WHERE adres_email='$email'";
+                $query = "SELECT haslo,ID_uzytkownik,id_typ_uzytkownika FROM uzytkownicy WHERE adres_email='$email'";
                 $result = $db->query($query);
                 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     if (password_verify($haslo, $row['haslo'])) {
                         $login = true;
                         $_SESSION['user_id'] = $row['ID_uzytkownik'];
+                        $_SESSION['user_type'] = $row['id_typ_uzytkownika'];
                     }
                 }
                 $db = null;

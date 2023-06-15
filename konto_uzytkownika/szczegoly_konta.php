@@ -61,7 +61,7 @@ if ($connected) {
         echo '<form method="post">';
         echo '<td>
         <input type="hidden" name="id_zamowienia_reklamacja" value="' . $row['ID_zamowienia'] . '">
-        <input type="submit" name="napiszreklamacje" value="Napisz reklamację"></td>';//czemu_ma_zawsze_ostatnie_idzamowienia
+        <input type="submit" name="napiszreklamacje" value="Napisz reklamację"></td>';
         echo '</form>';
         echo '</tr>';
     }

@@ -84,12 +84,18 @@ if (isset($_POST['showcart'])) {
 if (isset($_POST['accountdetails'])){
     header('Location:konto_uzytkownika/szczegoly_konta.php');
 }
+if (isset($_POST['adminpanel'])){
+    header('Location:administracja/panel_admina.php');
+}
 echo '<form method="post">';
 echo '<p align="right"><input type="submit" name="register" value="Zarejestruj się"></p>';
 if (isset($_SESSION['login'])) {
     if ($_SESSION['login']) {
         echo '<p align="right"><input type="submit" name="accountdetails" value="Sczegóły konta"></p>';
         echo '<p align="right"><input type="submit" name="signout" value="Wyloguj się"></p>';
+        if ($_SESSION['user_type'] == 1) {
+            echo '<p align="right"><input type="submit" name="adminpanel" value="Panel administracyjny"></p>';
+        }
     } else {
         echo '<p align="right"><input type="submit" name="signin" value="Zaloguj się"></p>';
     }

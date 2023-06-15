@@ -66,14 +66,14 @@ if (isset($_SESSION['login'])) {
                 $idZamowienia = $row['ID_zamowienia'];
                 $queryZamowioneProdukty = "SELECT id_produktu FROM zamowione_produkty WHERE id_zamowienie='$idZamowienia'";//pobranie_idProduktu
                 $resultZamowioneProdukty = $db->query($queryZamowioneProdukty);
-                while ($rowZamowioneProdukty = $resultZamowioneProdukty->fetch(PDO::FETCH_ASSOC)) {//zmieniam
+                while ($rowZamowioneProdukty = $resultZamowioneProdukty->fetch(PDO::FETCH_ASSOC)) {
                         $idProdukt = $rowZamowioneProdukty['id_produktu'];
-                        if ($idProdukt == $_SESSION['idprodukt']) {//trzeba_do_czegos_porownac
+                        if ($idProdukt == $_SESSION['idprodukt']) {
                             $kupilProdukt = true;
                                 $_SESSION['opiniaIDprodukt'] = $rowZamowioneProdukty['id_produktu'];
                         }
 
-                }//dotad
+                }
             }
         }
         $db = null;
