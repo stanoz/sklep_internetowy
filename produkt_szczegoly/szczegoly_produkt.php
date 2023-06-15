@@ -77,14 +77,13 @@ if (isset($_GET['id'])) {
 } else {
     $id = $_SESSION['idprodukt'];
 }
-$idOpinia = 0;
+//$idOpinia = 0;
 $idKategoria = 0;
 $dbuser = 'root';
 $dbpassword = '';
 $connected = false;
 $db = null;
 $srednia = 0;
-$liczba = 0;
 try {
     $db = new PDO("mysql:host=127.0.0.1;dbname=sklep_internetowy", $dbuser, $dbpassword);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -94,16 +93,10 @@ try {
     echo "Błąd połączenia z bazą danych: " . $e->getMessage();
 }
 if ($connected) {//liczenie_sredniej
-    $query = "SELECT id_opinia FROM produkty WHERE ID_produkt='$id'";
+    $query = "SELECT AVG(ocena) FROM opinie WHERE id_produktu='$id'";//id_to_idProduktu
     $result = $db->query($query);
     while ($row = $result->fetch(PDO::FETCH_ASSOC)){
-        $id_opinia = $row['id_opinia'];
-        $LiczOpinieQuery = "SELECT ocena FROM opinie";
-        $LiczOpinieResult = $db->query($LiczOpinieQuery);
-        while ($row2 = $LiczOpinieResult->fetch(PDO::FETCH_ASSOC)){
-            $srednia += $row2['ocena'];
-            $liczba++;
-        }
+        $srednia = round(doubleval($row['AVG(ocena)']),2);
     }
     $db->exec("SET NAMES utf8");
     echo "<h2 align='center'>Informacje o produkcie:</h2>";
@@ -113,7 +106,7 @@ if ($connected) {//liczenie_sredniej
     echo '<th align="center">Opis</th>';
     echo '<th align="center">Cena</th>';
     echo '</tr>';
-    $query = "SELECT * FROM produkty WHERE ID_produkt='$id'";
+    $query = "SELECT * FROM produkty WHERE ID_produkt='$id'";//id_to_idProduktu
     $result = $db->query($query);//szczegoly_produktu
     while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
         echo '<tr>';
@@ -133,16 +126,14 @@ if ($connected) {//liczenie_sredniej
         echo '<tr>';
         echo '<td align="center">' . $row['nazwa'] . '</td>';
         echo '</tr>';
-        $idOpinia = $row['id_opinia'];
+        //$idOpinia = $row['id_opinia'];
         $idKategoria = $row['id_kategoria'];
     }
     echo '</table>';//opinie
-    if ($idOpinia === 0 || is_null($idOpinia)) {
-        echo '<p align="center">Brak opinii o produkcie.</p>';
-    } else {
-        echo 'Średnia ocena o produkcie: '.round($srednia/$liczba).'/10<br>';
-        $query = "SELECT * FROM opinie WHERE ID_opinia='$idOpinia'";
-        $result = $db->query($query);
+        //echo '<p align="center">Brak opinii o produkcie.</p>';
+        echo 'Średnia ocena o produkcie: '.$srednia.'/10<br>';
+        $queryOpinia = "SELECT * FROM opinie WHERE id_produktu='$id'";//id_to_idProduktu
+        $resultOpinia = $db->query($queryOpinia);
         echo '<table align="center">';
         echo '<tr>';
         echo '<th align="center">Użytkownik</th>';
@@ -150,19 +141,23 @@ if ($connected) {//liczenie_sredniej
         echo '<th align="center">Ocena</th>';
         echo '<th align="center">Opinia</th>';
         echo '</tr>';
-        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-            $userNameQuery = "SELECT adres_email FROM uzytkownicy WHERE ID_uzytkownik='" . $row['id_uzytkownik'] . "'";
-            $userNameResult = $db->query($userNameQuery);
-            $userNameRow = $userNameResult->fetch(PDO::FETCH_ASSOC);
-            echo '<tr>';
-            echo '<td align="center">' . $userNameRow['adres_email'] . '</td>';
-            echo '<td align="center">' . $row['data_wystawienia'] . '</td>';
-            echo '<td align="center">' . $row['ocena'] . '/10</td>';
-            echo '<td align="center">' . $row['opinia'] . '</td>';
-            echo '</tr>';
+        while ($rowOpinia = $resultOpinia->fetch(PDO::FETCH_ASSOC)) {
+            $query = "SELECT * FROM produkty WHERE ID_produkt='$id'";//id_to_idProduktu
+            $result = $db->query($query);//szczegoly_produktu
+            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                $idUzytkownik = $rowOpinia['id_uzytkownik'];
+                $userNameQuery = "SELECT adres_email FROM uzytkownicy WHERE ID_uzytkownik='$idUzytkownik'";
+                $userNameResult = $db->query($userNameQuery);
+                $userNameRow = $userNameResult->fetch(PDO::FETCH_ASSOC);
+                    echo '<tr>';
+                    echo '<td align="center">' . $userNameRow['adres_email'] . '</td>';
+                    echo '<td align="center">' . $rowOpinia['data_wystawienia'] . '</td>';
+                    echo '<td align="center">' . $rowOpinia['ocena'] . '/10</td>';
+                    echo '<td align="center">' . $rowOpinia['opinia'] . '</td>';
+                    echo '</tr>';
+            }
         }
         echo '</table>';
-    }
     //produkty_z_tej_samej_kategorii
     $query = "SELECT * FROM produkty WHERE id_kategoria='$idKategoria'";
     $result = $db->query($query);

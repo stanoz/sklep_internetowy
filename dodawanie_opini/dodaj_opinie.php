@@ -64,20 +64,16 @@ if (isset($_SESSION['login'])) {
             $result = $db->query($query);
             while ($row = $result->fetch(PDO::FETCH_ASSOC)){
                 $idZamowienia = $row['ID_zamowienia'];
-                $queryZamowioneProdukty = "SELECT ID_zamowione_produkty FROM zamowione_produkty WHERE id_zamowienie='$idZamowienia'";
+                $queryZamowioneProdukty = "SELECT id_produktu FROM zamowione_produkty WHERE id_zamowienie='$idZamowienia'";//pobranie_idProduktu
                 $resultZamowioneProdukty = $db->query($queryZamowioneProdukty);
-                while ($rowZamowioneProdukty = $resultZamowioneProdukty->fetch(PDO::FETCH_ASSOC)) {
-                    $idZamowioneProdukty = $rowZamowioneProdukty['ID_zamowione_produkty'];
-                    $queryProdukt = "SELECT id_produktu FROM zamowione_produkty WHERE id_produktu='$idZamowioneProdukty'";
-                    $resultProdukt = $db->query($queryProdukt);
-                    while ($rowProdukt = $resultProdukt->fetch(PDO::FETCH_ASSOC)){
-                        $idProdukt = $rowProdukt['id_produktu'];
-                        if (!is_null($idProdukt)) {
+                while ($rowZamowioneProdukty = $resultZamowioneProdukty->fetch(PDO::FETCH_ASSOC)) {//zmieniam
+                        $idProdukt = $rowZamowioneProdukty['id_produktu'];
+                        if ($idProdukt == $_SESSION['idprodukt']) {//trzeba_do_czegos_porownac
                             $kupilProdukt = true;
-                                $_SESSION['opiniaIDprodukt'] = $rowProdukt['id_produktu'];
+                                $_SESSION['opiniaIDprodukt'] = $rowZamowioneProdukty['id_produktu'];
                         }
-                    }
-                }
+
+                }//dotad
             }
         }
         $db = null;
@@ -125,13 +121,14 @@ if (isset($_POST['newopinion'])) {
                         $ocena = $_POST['ocena'];
                         $id_uzytkownik = $_SESSION['user_id'];
                         $data_wystawienia = date("Y-m-d");
-                        $query = "INSERT INTO opinie (opinia,ocena,id_uzytkownik,data_wystawienia) 
-                        VALUES ('$opinia','$ocena','$id_uzytkownik','$data_wystawienia')";
-                        $db->query($query);
-                        $idOpinia = $db->lastInsertId();
                         $idProdukt = $_SESSION['opiniaIDprodukt'];
-                        $query = "UPDATE produkty SET id_opinia='$idOpinia' WHERE ID_produkt='$idProdukt'";
+                        $query = "INSERT INTO opinie (opinia,ocena,id_uzytkownik,data_wystawienia,id_produktu) 
+                        VALUES ('$opinia','$ocena','$id_uzytkownik','$data_wystawienia','$idProdukt')";
                         $db->query($query);
+//                        $idOpinia = $db->lastInsertId();
+//                        $idProdukt = $_SESSION['opiniaIDprodukt'];
+//                        $query = "UPDATE produkty SET id_opinia='$idOpinia' WHERE ID_produkt='$idProdukt'";
+//                        $db->query($query);
                     }
                     $db = null;
                 } else {
