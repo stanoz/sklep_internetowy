@@ -21,6 +21,9 @@ if (isset($_POST['magazyn'])){
 if (isset($_POST['uzytkownicy'])){
     header('Location:admin_uzytkownicy.php');
 }
+if (isset($_POST['rabaty'])){
+    header('Location:admin_rabaty.php');
+}
 if (isset($_POST['raport'])){
     include 'admin_raport.php';
 }
@@ -47,6 +50,10 @@ if (isset($_POST['raport'])){
         <tr>
             <td align="center">Użytkownicy</td>
             <td align="center"><input type="submit" name="uzytkownicy" value="Zarządzaj"></td>
+        </tr>
+        <tr>
+            <td align="center">Rabaty</td>
+            <td align="center"><input type="submit" name="rabaty" value="Zarządzaj"></td>
         </tr>
         <tr>
             <td align="center">Raport z ostatniego miesiąca</td>

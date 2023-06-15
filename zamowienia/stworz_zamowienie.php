@@ -55,7 +55,7 @@ if (isset($_POST['doplatnosci'])) {
     }
     $_SESSION['czy_rabat'] = $kodRabatowy;
     if ($kodRabatowy) {
-        $doZaplaty = round($doZaplaty*0.8,2);
+        $doZaplaty = round(doubleval($doZaplaty)*0.8,2);
         $_SESSION['dozaplaty'] = $doZaplaty;
     }
     if (!empty($_POST['phonenumber']) && !empty($_POST['city']) && !empty($_POST['street']) && !empty($_POST['kodpocztowy']) && !empty($_POST['nrdomu']) && !empty($_POST['formaplatnosci'])) {
