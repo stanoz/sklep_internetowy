@@ -89,7 +89,6 @@ if ($connected) {//wyswietlanie_uzytkownikow
     echo '<td align="center">Nazwisko</td>';
     echo '<td align="center">Adres email</td>';
     echo '<td align="center">Typ</td>';
-    echo '<td align="center"></td>';
     echo '<td align="center">Nowy typ</td>';
     echo '<td align="center">Nowe hasło</td>';
     echo '<td align="center">Nowe imię</td>';
