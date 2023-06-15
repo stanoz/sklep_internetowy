@@ -21,6 +21,9 @@ if (isset($_POST['magazyn'])){
 if (isset($_POST['uzytkownicy'])){
     header('Location:admin_uzytkownicy.php');
 }
+if (isset($_POST['raport'])){
+    include 'admin_raport.php';
+}
 ?>
 <h1 align="center">Sklep internetowy z artykułami biurowymi</h1><br>
 <h2 align="center">Panel administracyjny</h2><br>
