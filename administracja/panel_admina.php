@@ -15,6 +15,9 @@ if (isset($_POST['reklamacje'])){
 if (isset($_POST['zamowienia'])){
     header('Location:admin_zamowienia.php');
 }
+if (isset($_POST['magazyn'])){
+    header('Location:admin_magazyn.php');
+}
 if (isset($_POST['uzytkownicy'])){
     header('Location:admin_uzytkownicy.php');
 }
