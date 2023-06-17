@@ -102,7 +102,7 @@ if (isset($_POST['newopinion'])) {
         setcookie('opinia', 'antyspam', $expirationTime);
         if (isset($_POST['ocena']) && isset($_POST['opinion'])) {
             if (is_numeric($_POST['ocena'])) {
-                if (strlen($_POST['opinion']) <= 255) {
+                if (strlen($_POST['opinion']) <= 255 && !preg_match('#^\s+$#',$_POST['opinion'])) {
                     $dbuser = 'root';
                     $dbpassword = '';
                     $connected = false;
