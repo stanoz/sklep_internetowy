@@ -129,7 +129,7 @@ if ($connected) {//liczenie_sredniej
     }
     echo '</table>';//opinie
     $ileOpinii = 0;
-    $queryIleOpinii = "SELECT COUNT(ID_opinia) AS total FROM opinie WHERE id_produktu='$id';";//id_to_idProduktu
+    $queryIleOpinii = "SELECT COUNT(ID_opinia) AS total FROM opinie WHERE id_produktu='$id'";//id_to_idProduktu
     $resultIleOpinii = $db->query($queryIleOpinii);
     while ($rowIleOpinii = $resultIleOpinii->fetch(PDO::FETCH_ASSOC)){
         $ileOpinii = intval($rowIleOpinii['total']);
