@@ -125,10 +125,6 @@ if (isset($_POST['newopinion'])) {
                         $query = "INSERT INTO opinie (opinia,ocena,id_uzytkownik,data_wystawienia,id_produktu) 
                         VALUES ('$opinia','$ocena','$id_uzytkownik','$data_wystawienia','$idProdukt')";
                         $db->query($query);
-//                        $idOpinia = $db->lastInsertId();
-//                        $idProdukt = $_SESSION['opiniaIDprodukt'];
-//                        $query = "UPDATE produkty SET id_opinia='$idOpinia' WHERE ID_produkt='$idProdukt'";
-//                        $db->query($query);
                     }
                     $db = null;
                 } else {

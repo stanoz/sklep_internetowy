@@ -77,7 +77,6 @@ if (isset($_GET['id'])) {
 } else {
     $id = $_SESSION['idprodukt'];
 }
-//$idOpinia = 0;
 $idKategoria = 0;
 $dbuser = 'root';
 $dbpassword = '';
@@ -126,12 +125,17 @@ if ($connected) {//liczenie_sredniej
         echo '<tr>';
         echo '<td align="center">' . $row['nazwa'] . '</td>';
         echo '</tr>';
-        //$idOpinia = $row['id_opinia'];
         $idKategoria = $row['id_kategoria'];
     }
     echo '</table>';//opinie
-        //echo '<p align="center">Brak opinii o produkcie.</p>';
-        echo 'Średnia ocena o produkcie: '.$srednia.'/10<br>';
+    $ileOpinii = 0;
+    $queryIleOpinii = "SELECT COUNT(ID_opinia) AS total FROM opinie WHERE id_produktu='$id';";//id_to_idProduktu
+    $resultIleOpinii = $db->query($queryIleOpinii);
+    while ($rowIleOpinii = $resultIleOpinii->fetch(PDO::FETCH_ASSOC)){
+        $ileOpinii = intval($rowIleOpinii['total']);
+    }
+    if ($ileOpinii > 0) {
+        echo 'Średnia ocena o produkcie: ' . $srednia . '/10<br>';
         $queryOpinia = "SELECT * FROM opinie WHERE id_produktu='$id'";//id_to_idProduktu
         $resultOpinia = $db->query($queryOpinia);
         echo '<table align="center">';
@@ -149,15 +153,18 @@ if ($connected) {//liczenie_sredniej
                 $userNameQuery = "SELECT adres_email FROM uzytkownicy WHERE ID_uzytkownik='$idUzytkownik'";
                 $userNameResult = $db->query($userNameQuery);
                 $userNameRow = $userNameResult->fetch(PDO::FETCH_ASSOC);
-                    echo '<tr>';
-                    echo '<td align="center">' . $userNameRow['adres_email'] . '</td>';
-                    echo '<td align="center">' . $rowOpinia['data_wystawienia'] . '</td>';
-                    echo '<td align="center">' . $rowOpinia['ocena'] . '/10</td>';
-                    echo '<td align="center">' . $rowOpinia['opinia'] . '</td>';
-                    echo '</tr>';
+                echo '<tr>';
+                echo '<td align="center">' . $userNameRow['adres_email'] . '</td>';
+                echo '<td align="center">' . $rowOpinia['data_wystawienia'] . '</td>';
+                echo '<td align="center">' . $rowOpinia['ocena'] . '/10</td>';
+                echo '<td align="center">' . $rowOpinia['opinia'] . '</td>';
+                echo '</tr>';
             }
         }
         echo '</table>';
+    }else{
+        echo '<p align="center"><b>Brak opinii o produkcie.</b></p>';
+    }
     //produkty_z_tej_samej_kategorii
     $query = "SELECT * FROM produkty WHERE id_kategoria='$idKategoria'";
     $result = $db->query($query);

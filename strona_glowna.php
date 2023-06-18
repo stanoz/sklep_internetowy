@@ -47,7 +47,6 @@ echo '</form>';
 if (!isset($_SESSION['login'])) {
     $_SESSION['login'] = false;
 }
-//$koszyk = new Koszyk();
 if (isset($_POST['addtocart'])) {
     $_SESSION['koszykIDprodukt'] = $_POST['koszyk_id_produktu'];
     if (isset($_SESSION['koszyk'])) {
@@ -60,9 +59,6 @@ if (isset($_POST['addtocart'])) {
         $_SESSION['koszyk'] = serialize($koszyk);
     }
 }
-//    if (isset($_SESSION['idprodukt'])) {
-//        unset($_SESSION['idprodukt']);
-//    }
 $_SESSION['fromsite'] = "main";
 if (isset($_POST['signout'])) {
     $_SESSION['login'] = false;
