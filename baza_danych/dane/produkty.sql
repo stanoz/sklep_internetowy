@@ -1,0 +1,14 @@
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (1, 5.00, 'olowek_cienki1.png', 1, 20, 'ołówek_cienki', 'Ołówek cienki dobry do rysowania figór geometrycznych i wykresów.');
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (2, 5.50, 'olowek_sredni1.png', 1, 14, 'ołówek_średni', 'Ołówek średni dobry do rysowania.');
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (3, 6.00, 'dlugopis_czarny1.png', 2, 76, 'długopis_czarny', 'Długopis o czarnym kolorze tuszu.');
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (4, 6.00, 'dlugopis_niebieski1.png', 2, 64, 'długopis_niebieski', 'Długopis o niebieskim kolorze tuszu.');
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (5, 8.50, 'dlugopis_kolorowy1.png', 2, 27, 'długopis_różnokolorowy', 'Długopis o wielu koloroch tuszu do wyboru(niebieski, czarny, czerwony, zielony).');
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (6, 2.50, 'temperowka_plastikowa1.png', 3, 23, 'temperówka_plastikowa', 'Mała, poręczna temperówka plastikowa.');
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (7, 2.50, 'temperowka_metalowa1.png', 3, 25, 'temperówka_metalowa', 'Mała, poręczna temperówka metalowa.');
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (8, 15.00, 'temperowka_automatyczna1.png', 3, 19, 'temperówka_automatyczna', 'Temperówka automatyczna umożliwiająca szybkie ostrzenie.');
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (9, 2.00, 'linijka1.png', 4, 49, 'linijka', 'Linijka plastikowa o dlugości 15 centymetrów.');
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (10, 2.50, 'ekierka1.png', 4, 50, 'ekierka', 'Ekierka plastikowa.');
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (11, 2.50, 'katomierz1.png', 4, 29, 'kątomierz', 'Kątomierz plastikowy.');
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (12, 12.00, 'nozyczki.png', 5, 35, 'nożyczki', 'Nożyczki do papieru.');
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (13, 1.00, 'gumka1.png', 5, 59, 'gumka', 'Biała gumka do zmazywania.');
+INSERT INTO sklep_internetowy.produkty (ID_produkt, cena, zdjecie, id_kategoria, ilosc, nazwa, opis) VALUES (14, 10.00, 'cyrkiel1.png', 5, 30, 'cyrkiel', 'Cyrkiel z wkładem grafitowym.');

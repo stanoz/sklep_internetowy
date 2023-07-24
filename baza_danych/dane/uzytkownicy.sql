@@ -1,0 +1,2 @@
+INSERT INTO sklep_internetowy.uzytkownicy (ID_uzytkownik, imie, nazwisko, adres_email, haslo, id_typ_uzytkownika) VALUES (1, 'admin', 'admin', 'admin@admin.com', '$2y$10$uT0jFmFEzL1ehZsUvgBoRedZuvKYqIYtn.6LsEcJ4z7wzNKzgTuKK', 1);
+INSERT INTO sklep_internetowy.uzytkownicy (ID_uzytkownik, imie, nazwisko, adres_email, haslo, id_typ_uzytkownika) VALUES (8, 'Jan', 'Nowak', 'test@test.com', '$2y$10$3m1ipuyog2aU45RSfQbDSuNvGVNud.5vEy3PSpV8KI5WWangqCPlK', 2);
